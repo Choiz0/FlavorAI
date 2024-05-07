@@ -7,6 +7,12 @@ import useRecipeForm from "../hooks/useRecipeForm";
 import { useAuth } from "../context/AuthContext";
 import RecipeForm from "../components/RecipeForm";
 import { v4 as uuidv4 } from "uuid";
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 
 const CreateRecipe = () => {
   const navigate = useNavigate();
@@ -25,6 +31,7 @@ const CreateRecipe = () => {
     protein: "",
     notes: "",
     recipe_tips: [""],
+    images: [],
   };
   const { currentUser } = useAuth();
   const {
@@ -36,6 +43,8 @@ const CreateRecipe = () => {
     handleInstructionChange,
     addInstruction,
     handleRemoveInstruction,
+    handleImageChange,
+    handleImageRemove,
   } = useRecipeForm(initialFormState);
 
   const handleSave = async () => {
@@ -44,6 +53,19 @@ const CreateRecipe = () => {
 
       // Ensure there are images to save
       const recipeId = uuidv4();
+
+      const imagesUrls = await Promise.all(
+        formData.images.map(async (imageFile) => {
+          const imageRef = storageRef(
+            getStorage(),
+            `recipes/${currentUser.uid}/${recipeId}/${imageFile.name}`
+          );
+          const snapshot = await uploadBytes(imageRef, imageFile);
+          const downloadUrl = await getDownloadURL(snapshot.ref);
+          return downloadUrl;
+        })
+      );
+
       const docData = {
         title: formData.title,
         description: formData.description,
@@ -61,6 +83,7 @@ const CreateRecipe = () => {
         time: formData.time,
         cuisine: formData.cuisine,
         notes: formData.notes,
+        images: imagesUrls,
       };
       await setDoc(
         doc(db, "users", currentUser.uid, "recipes", recipeId),
@@ -88,6 +111,8 @@ const CreateRecipe = () => {
         handleRemoveInstruction={handleRemoveInstruction}
         onSave={handleSave}
         title="Create Recipe"
+        handleImageChange={handleImageChange}
+        handleImageRemove={handleImageRemove}
       />
     </>
   );

@@ -18,3 +18,22 @@
    v2.0 | 20110126
    License: none (public domain)
 */
+@media print {
+  body {
+    font-size: 12pt;
+  }
+  .no-print {
+    display: none; /* This class can be added to any element you do not want to print */
+  }
+  header,
+  footer,
+  nav,
+  button .sidebar {
+    display: none; /* Hides elements that are not needed in print */
+  }
+  .printContent {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}

@@ -30,8 +30,8 @@ const Intro = () => {
   };
   return (
     <div className="container mx-auto ">
-      <div className="dark:bg-gray-800 bg-white md:mt-40 mt-10 mx-10 shadow-lg rounded-lg md:items-start md:max-h-[1000px]">
-        <div className="flex justify-center md:pt-20 p-4 mx-auto md:flex-row lg:px-8 flex-col">
+      <div className="dark:bg-gray-800 bg-white md:mt-40 mt-10 mx-4 shadow-lg rounded-lg md:items-start md:max-h-[1000px]">
+        <div className="flex justify-center md:pt-20 p-2 mx-auto md:flex-row lg:px-8 flex-col">
           <div className="flex  text-center lg:text-left ">
             <div className="space-y-10 ">
               <div>

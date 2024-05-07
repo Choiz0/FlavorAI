@@ -14,6 +14,8 @@ const RecipeForm = ({
   handleRemoveInstruction,
   onSave,
   title,
+  handleImageChange,
+  handleImageRemove,
 }) => {
   const navigate = useNavigate();
   return (
@@ -74,7 +76,7 @@ const RecipeForm = ({
           <input
             type="text"
             name="cuisine"
-            value={formData.cuisine}
+            value={formData?.cuisine}
             onChange={onChange}
             className="rounded-md md:w-full w-[90%] border border-[#e0e0e0] bg-white py-1 md:px-6 px-2 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
           />
@@ -153,13 +155,16 @@ const RecipeForm = ({
             <label className="text-gray-600 dark:text-gray-400 mb-4">
               Difficulty
             </label>
-            <input
-              type="text"
-              name="difficulty"
+            <select
               value={formData.difficulty}
               onChange={onChange}
-              className="rounded-md w-full border border-[#e0e0e0] bg-white py-1 md:px-6 px-2 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-            />
+              name="difficulty"
+              className="w-full mt-4 md:text-xl border-dark rounded border  md:text-left  py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-pink focus:border-transparent focus:ring-2"
+            >
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
           </div>
         </div>
         {/* Nutrition Information */}
@@ -271,7 +276,55 @@ const RecipeForm = ({
             rows="4"
           ></textarea>
         </div>
+
+        <label className="text-gray-600 dark:text-gray-400">Images</label>
+        <input
+          type="file"
+          multiple
+          onChange={handleImageChange}
+          accept="image/*"
+          className="mb-2"
+        />
+        <div className="flex flex-wrap">
+          {formData.images?.map((image, index) => (
+            <div key={index} className="p-2">
+              {image instanceof File ? (
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt={`Preview ${index}`}
+                  style={{ width: "100px", height: "100px" }}
+                />
+              ) : (
+                <img
+                  src={image}
+                  alt={`Image ${index}`}
+                  style={{ width: "100px", height: "100px" }}
+                />
+              )}
+              <button
+                onClick={() => handleImageRemove(index)}
+                className="text-red-500 hover:text-red-700"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
       </form>
+      <div className=" px-4 py-2 md:fixed flex w-[90vw] justify-end gap-4">
+        <button
+          onClick={onSave}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold md:py-2 px-4  py-1 rounded md:text-xl"
+        >
+          Save
+        </button>
+        <button
+          onClick={() => navigate(-1)}
+          className="bg-pink text-white font-bold md:py-2 px-4 rounded text-xl  py-1  md:text-xl"
+        >
+          cancel
+        </button>
+      </div>
     </div>
   );
 };

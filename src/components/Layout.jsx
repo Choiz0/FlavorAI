@@ -17,9 +17,9 @@ function Layout() {
   }, [currentUser]);
 
   return (
-    <div className=" w-screen h-screen">
+    <div className=" w-screen h-screen  min-w-[312px] ">
       <Navbar /> :
-      <main className="lg:pt-36 flex  w-screen justify-center min-h-[97%] ">
+      <main className="lg:pt-36 flex  w-screen justify-center min-h-[97%]  min-w-[312px] printContent ">
         <Outlet />
       </main>
       <Footer />

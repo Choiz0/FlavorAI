@@ -36,8 +36,8 @@ const RecipeCard = ({ recipe, isMyRecipe, imageSearchList }) => {
         <img
           src={
             isMyRecipe
-              ? recipe?.image && recipe.image.length > 0
-                ? recipe.image[0]
+              ? recipe?.images && recipe.images.length > 0
+                ? recipe.images[0]
                 : defaultImg
               : imageSearchList || defaultImg
           }

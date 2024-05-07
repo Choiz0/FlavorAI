@@ -22,6 +22,20 @@ const useRecipeForm = (initialData) => {
     setFormData({ ...formData, ingredients: newIngredients });
   };
 
+  const handleImageChange = (event) => {
+    const files = Array.from(event.target.files); // 파일 리스트를 배열로 변환
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      images: [...prevFormData.images, ...files], // 기존 이미지 배열에 새 파일들 추가
+    }));
+  };
+  const handleImageRemove = (index) => {
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      images: prevFormData.images.filter((_, i) => i !== index)
+    }));
+  };
+
   const addIngredient = () => {
     const newIngredient = { Name: "", Amount: "" };
     setFormData({
@@ -68,6 +82,8 @@ const useRecipeForm = (initialData) => {
     handleInstructionChange,
     addInstruction,
     handleRemoveInstruction,
+    handleImageChange,
+    handleImageRemove,
   };
 };
 

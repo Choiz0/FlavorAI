@@ -167,7 +167,7 @@ function RecipeModal({ setshowModal, showModal, title, defaultImg }) {
         protein: recipe.Protein || recipe.protein,
         time: recipe.Time || recipe.time,
         cuisine: recipe.Cuisine || recipe.cuisine,
-        image: safeImages,
+        images: safeImages,
       };
       await setDoc(
         doc(db, "users", currentUser.uid, "recipes", recipeId),

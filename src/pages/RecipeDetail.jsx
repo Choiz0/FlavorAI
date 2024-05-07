@@ -15,6 +15,7 @@ import { ToastContainer, toast } from "react-toastify";
 import defaultImg from "../assets/default.jpg";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
+import DownloadWordButton from "../components/DownladWordButton";
 
 const RecipeDetail = () => {
   const { recipeId } = useParams();
@@ -68,9 +69,9 @@ const RecipeDetail = () => {
         <div>
           <span className="md:text-5xl text-lg">Recipe Details</span>
         </div>
-        <div className="flex gap-2 ">
+        <div className="flex gap-2 no-print flex-wrap justify-end ">
           <button
-            className="bg-dark text-white md:w-[100px] w-[70px] rounded-lg onClick={handleSave} md:text-lg text-md"
+            className="bg-dark text-white md:w-[100px] w-[70px]  rounded-lg onClick={handleSave} md:text-lg text-md"
             onClick={() => navigate(-1)}
           >
             Back
@@ -87,6 +88,12 @@ const RecipeDetail = () => {
           >
             Delete
           </button>
+          <button
+            className="bg-green-500 py-2 text-white md:w-[100px] w-[70px] rounded-lg onClick={handleSave} md:text-lg text-md"
+            onClick={() => window.print()}
+          >
+            Print
+          </button>
         </div>
       </div>
       <div className=" md:flex items-center h-[200px] md:justify-around  justify-center ">
@@ -95,8 +102,8 @@ const RecipeDetail = () => {
         </h3>
 
         <div className="flex overflow-scroll  md:overflow-hidden ">
-          {recipeDetails.image ? (
-            recipeDetails?.image.map((it, index) => (
+          {recipeDetails.images ? (
+            recipeDetails?.images.map((it, index) => (
               <img
                 key={index}
                 src={it}

@@ -57,7 +57,9 @@ const Navbar = () => {
           <div className="flex  md:hidden">
             <button
               onClick={() => setHambergerOpen(!hambergerOpen)}
-              className="text-gray-800  hover:text-gray-300 inline-flex items-center justify-center p-2 rounded-md focus:outline-none"
+              className={`text-gray-800  hover:text-gray-300 inline-flex items-center justify-center p-2 rounded-md focus:outline-none ${
+                auth.currentUser ? "" : "hidden"
+              }`}
             >
               {!hambergerOpen ? (
                 <svg
@@ -94,7 +96,7 @@ const Navbar = () => {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 divide-y-2 divide-slate-100 ">
             <div className="flex gap-2 justify-end pr-4 z-1000 ">
               {" "}
-              {auth.currentUser.photoURL ? (
+              {auth.currentUser?.photoURL ? (
                 <img
                   className="lg:h-12 lg:w-12 h-6 w-6 rounded-full"
                   src={auth.currentUser.photoURL}

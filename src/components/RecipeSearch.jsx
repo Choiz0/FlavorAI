@@ -73,8 +73,9 @@ const RecipeSearch = () => {
 
         
         
-        you must find and get result recipe menu including key ingredients: ${ingredients} and  ${cuisine} cuisions,  and difficulty: ${difficulty} and time: ${time} and anything adding comment including ${anything}
-        Think step by step andfor webpage display, make sure it shuold be in a array object strict JSON format and must do not include any text or symbol  such as 'js' or comma or  outside of array object .
+        you must find and get result recipe menu including key ingredients: ${ingredients} and  ${cuisine} cuisions,  and difficulty: ${difficulty} and time: ${time}.
+        You must search recipe if there is comments ' ${anything} ' and find proper results in the recipe.
+        Think step by step and for webpage display, make sure it shuold be in a array object strict JSON format and must do not include any text or symbol  such as 'js' or comma or  outside of array object .
         you must not contain any backticks or period, as these can cause parsing errors.
         Ensure that the image URLs provided are valid and accesible search using google image or recipe.com.
         do not use wp-content in the URL.
@@ -162,7 +163,7 @@ const RecipeSearch = () => {
       >
         <ToastContainer />
         <div
-          className={`flex flex-col transition-all md:p-8 p-4 rounded-lg my-4  ${
+          className={`flex flex-col transition-all md:p-8 p-4 rounded-lg my-4 shrink-0 ${
             recipes?.length > 0
               ? "md:flex-start md:justify-start md:border-r-2 md:border-zinc-200 md:h-screen mx-auto  "
               : "bg-white shadow-lg justify-center md:w-[40%] mt-24 w-[80%]  "
@@ -178,7 +179,7 @@ const RecipeSearch = () => {
             }`}
           >
             <div className="md:flex items-center my-8 ">
-              <label className="mr-4  sm:text-2xl text-md sm:w-32">
+              <label className="mr-4  sm:text-2xl text-md sm:w-32 ">
                 {" "}
                 Ingredients
               </label>
@@ -186,7 +187,7 @@ const RecipeSearch = () => {
                 ref={ref}
                 className=" rounded-lg flex-1 appearance-none border border-lightgray w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 fo focus:ring-pink focus:border-transparent"
                 type="text"
-                placeholder="Enter ingredients "
+                placeholder="Enter ingredients to search recipe"
                 value={ingredients}
                 onChange={(e) => setIngredients(e.target.value)}
               />

@@ -74,6 +74,7 @@ const Register = ({ handleRegister }) => {
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
+            onClick={handleRegister}
           >
             {" "}
             <path stroke="none" d="M0 0h24v24H0z" />{" "}
