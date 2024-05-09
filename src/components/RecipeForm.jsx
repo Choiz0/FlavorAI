@@ -157,7 +157,7 @@ const RecipeForm = ({
             </label>
             <select
               value={formData.difficulty}
-              onChange={onChange}
+              onSelect={onChange}
               name="difficulty"
               className="w-full mt-4 md:text-xl border-dark rounded border  md:text-left  py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-pink focus:border-transparent focus:ring-2"
             >

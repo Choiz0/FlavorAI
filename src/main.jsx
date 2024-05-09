@@ -23,6 +23,7 @@ import Layout from "./components/Layout";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { useAuth } from "./context/AuthContext.jsx";
+import OpenapiSearch from "./components/OpenapiSearch.jsx";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: "homepage",
         element: <Homepage />,
+      },
+      {
+        path: "openAI",
+        element: <OpenapiSearch />,
       },
 
       {

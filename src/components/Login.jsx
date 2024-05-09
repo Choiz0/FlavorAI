@@ -2,7 +2,7 @@ import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { toast, ToastContainer } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const Login = ({ handleLogin }) => {
@@ -122,21 +122,8 @@ const Login = ({ handleLogin }) => {
                 />
               </label>
               <div className="flex flex-row justify-between">
-                <div>
-                  <label className="">
-                    <input
-                      type="checkbox"
-                      id="remember"
-                      className="w-4 h-4 border-slate-200 focus:bg-indigo-600"
-                    />
-                    Remember me
-                  </label>
-                </div>
-                <div>
-                  <a href="#" className="font-medium text-indigo-600">
-                    Forgot Password?
-                  </a>
-                </div>
+                <div></div>
+                <div></div>
               </div>
               <button className="w-full py-3 font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg border-indigo-500 hover:shadow inline-flex space-x-2 items-center justify-center">
                 <svg
@@ -157,8 +144,8 @@ const Login = ({ handleLogin }) => {
               </button>
               <p className="text-center">
                 Not registered yet?{" "}
-                <a
-                  href="#"
+                <Link
+                  to="/register"
                   className="text-indigo-600 font-medium inline-flex space-x-1 items-center"
                 >
                   <span>Register now </span>
@@ -178,7 +165,7 @@ const Login = ({ handleLogin }) => {
                       />
                     </svg>
                   </span>
-                </a>
+                </Link>
               </p>
             </div>
           </form>

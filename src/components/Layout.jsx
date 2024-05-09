@@ -19,7 +19,7 @@ function Layout() {
   return (
     <div className=" w-screen h-screen  min-w-[312px] ">
       <Navbar /> :
-      <main className="lg:pt-36 flex  w-screen justify-center min-h-[97%]  min-w-[312px] printContent ">
+      <main className="lg:pt-36 flex  w-screen justify-center min-h-[94%]  min-w-[312px] printContent  bg-slate-50 ">
         <Outlet />
       </main>
       <Footer />

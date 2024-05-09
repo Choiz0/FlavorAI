@@ -29,8 +29,8 @@ const Intro = () => {
     setLoginOpen(false);
   };
   return (
-    <div className="container mx-auto ">
-      <div className="dark:bg-gray-800 bg-white md:mt-40 mt-10 mx-4 shadow-lg rounded-lg md:items-start md:max-h-[1000px]">
+    <div className="container mx-auto  ">
+      <div className=" mt-10 mx-4  md:items-start ">
         <div className="flex justify-center md:pt-20 p-2 mx-auto md:flex-row lg:px-8 flex-col">
           <div className="flex  text-center lg:text-left ">
             <div className="space-y-10 ">
@@ -38,16 +38,13 @@ const Intro = () => {
                 <div className="mb-1 text-md font-bold uppercase tracking-wider text-dark">
                   Get Started
                 </div>
-                <h2 className="mb-4 text-4xl font-black text-black md:text-6xl leading-relaxed">
-                  Embark on your culinary journey{" "}
-                  <sapn className="text-blue-600 dark:text-blue-500 ">
-                    Today!
-                  </sapn>
+                <h2 className="mb-4 text-4xl font-black text-black md:text-4xl leading-relaxed">
+                  Embark on your culinary journey Today!
                 </h2>
                 <h3 className="text-xl  md:text-2xl font-medium leading-relaxed text-gray-700 dark:text-gray-300">
                   Just enter your ingredients and let our{" "}
                   <strong className="bg-lightblue p-1 rounded">
-                    Google Gemini AI
+                    ChatGPT and google
                   </strong>{" "}
                   based app recommend delicious recipes instantly. Experience
                   amazing cooking from day one without the hassle. Set up your

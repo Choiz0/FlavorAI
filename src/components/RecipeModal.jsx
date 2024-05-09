@@ -5,12 +5,13 @@ import { toast, ToastContainer } from "react-toastify";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Button from "./Button";
 import { useAuth } from "../context/AuthContext";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+
 const API_KEY_IMG = import.meta.env.VITE_CUSTOM_SEARCH_API;
-function RecipeModal({ setshowModal, showModal, title, defaultImg }) {
+function RecipeModal({ setshowModal, showModal, title, defaultImg, difficulty, anythings, cookingTime, cuisine}) {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
@@ -40,7 +41,8 @@ function RecipeModal({ setshowModal, showModal, title, defaultImg }) {
     try {
       const genAI = new GoogleGenerativeAI(API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const prompt = `A provide detail recipe for ${title}. the recipe have to include the following details and portion size must Kilogram or grams the recipe. : 
+      const prompt = `A provide detail recipe for ${title} and ${anythings} and ${cookingTime} and ${cuisine} and ${difficulty} and
+      the recipe have to include the following example details and portion size must Kilogram or grams the recipe. : 
           {
               "Title": "Kimchi Fried Rice",
               "difficutly": "Easy",
@@ -99,7 +101,7 @@ function RecipeModal({ setshowModal, showModal, title, defaultImg }) {
     
 
   
-                     Think step by step andfor webpage display, make sure it shuold be  strict JSON format and must do not include any text or symbol  such as 'js' or comma or  outside of array object .
+                     Think step by step and for webpage display, make sure it shuold be  strict JSON format and must do not include any text or symbol  such as 'js' or comma or  outside of array object .
                     you must not contain any backticks or period, as these can cause parsing errors.
                      it must be json format .
   
@@ -157,7 +159,7 @@ function RecipeModal({ setshowModal, showModal, title, defaultImg }) {
         ingredients: recipe.Ingredients || recipe.ingredients,
         instructions: recipe.Instructions || recipe.instructions,
         recipe_tips: recipe.Tips || recipe.tips,
-        saveTime: new Date().toISOString(),
+        saveTime: serverTimestamp(),
         recipeId: recipeId,
         difficulty: recipe.Difficulty || recipe.difficulty,
         servings: recipe.Servings || recipe.servings,
@@ -174,8 +176,8 @@ function RecipeModal({ setshowModal, showModal, title, defaultImg }) {
         docData
       );
 
-      toast.success("Recipe saved successfully");
       navigate("/myrecipe");
+      toast.success("Recipe saved successfully");
     } catch (error) {
       console.error("Failed to save recipe:", error);
       toast.error("Failed to save recipe: " + error.message);
@@ -242,7 +244,7 @@ function RecipeModal({ setshowModal, showModal, title, defaultImg }) {
                 </button>
                 <button
                   className="bg-dark text-white md:w-[100px] w-[30px] rounded-lg  md:text-lg text-md"
-                  onClick={() => navigate(-1)}
+                  onClick={() => setshowModal(false)}
                 >
                   X
                 </button>

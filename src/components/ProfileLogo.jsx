@@ -13,7 +13,6 @@ const ProfileLogo = ({ mobile }) => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      toast.success("Logout Success");
       navigate("/");
     } catch (error) {
       toast.error("Logout Failed");
@@ -44,20 +43,20 @@ const ProfileLogo = ({ mobile }) => {
           <>
             <button
               type="button"
-              className={`flex px-1 items-center bg-slate-100 md:justify-center w-full rounded-md ${
+              className={`flex px-1 items-center  md:justify-center w-full rounded-md ${
                 auth.currentUser ? "md:px-4" : "bg-transparent"
               } md:py-2`}
               id="options-menu"
               onClick={() => setProfileOpen(!profileOpen)}
             >
-              <div className="lg:text-2xl text-navy m-2">
-                {auth.currentUser?.displayName
-                  ? auth.currentUser?.displayName
-                  : auth.currentUser?.email}
+              <div className="lg:text-xl text-navy m-2">
+                {auth.currentUser && auth.currentUser.displayName
+                  ? auth.currentUser?.displayName || auth.currentUser?.email
+                  : ""}
               </div>
               {auth.currentUser?.photoURL ? (
                 <img
-                  className="lg:h-12 lg:w-12 h-6 w-6 rounded-full"
+                  className="lg:h-8 lg:w-8 h-6 w-6 rounded-full"
                   src={imageUrl}
                   alt=""
                 />

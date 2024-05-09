@@ -14,18 +14,19 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const NAVLIST = [
-    ["AI Search Recipe", "/"],
+    ["Ingrident based Search", "/"],
+    ["Image based Search", "/openAI"],
     ["My Recipe", "/myrecipe"],
     ["Add New Recipe", "/addNewRecipe"],
   ];
   return (
     <nav className="bg-lavender shadow w-full  fixed  z-10 mb-2">
       <div className="lg:px-8 py-2 px-3">
-        <div className=" lg:h-16  sm:h-12 h-10  flex lg:justify-between   justify-between items-center  ">
+        <div className=" lg:h-10  sm:h-12 h-10  flex lg:justify-between   justify-between items-center  ">
           <div className={`flex items-center lg:w-2/3`}>
             <Link className="flex-none " to="/">
               <img
-                className="sm:w-[100px] sm:h-[100px] w-[80px] lg:w-[130px] lg:h-[130px]"
+                className="sm:w-[100px] sm:h-[100px] w-[80px] lg:w-[100px] lg:h-[100px]"
                 src={logo}
                 alt="logo"
               />
@@ -40,7 +41,7 @@ const Navbar = () => {
                   {NAVLIST.map((item, i) => (
                     <Link
                       key={i}
-                      className="text-navy min-w-36 md:text-xl md:text-center  lg:text-2xl border-4 border-transparent hover:drop-shadow-lg hover:shadow-white-50 transition-all hover:border-b-lightblue py-2 text-md font-medium"
+                      className="text-navy min-w-36 md:text-xl md:text-center  lg:text-lg border-4 border-transparent hover:drop-shadow-lg hover:shadow-white-50 transition-all hover:border-b-lightblue py-2 text-md font-medium"
                       to={item[1]}
                     >
                       {item[0]}

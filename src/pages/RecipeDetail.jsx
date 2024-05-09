@@ -15,7 +15,6 @@ import { ToastContainer, toast } from "react-toastify";
 import defaultImg from "../assets/default.jpg";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
-import DownloadWordButton from "../components/DownladWordButton";
 
 const RecipeDetail = () => {
   const { recipeId } = useParams();
@@ -89,7 +88,7 @@ const RecipeDetail = () => {
             Delete
           </button>
           <button
-            className="bg-green-500 py-2 text-white md:w-[100px] w-[70px] rounded-lg onClick={handleSave} md:text-lg text-md"
+            className="bg-green-500 py-2 text-white md:w-[100px] w-[70px] rounded-lg onClick={handleSave} md:text-lg text-md hidden md:block"
             onClick={() => window.print()}
           >
             Print

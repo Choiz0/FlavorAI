@@ -7,6 +7,7 @@ import RecipeCard from "./RecipeCard";
 import axios from "axios";
 import debounce from "lodash/debounce";
 import { useNavigate } from "react-router-dom";
+import OpenAI from "openai";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 const API_KEY_IMG = import.meta.env.VITE_CUSTOM_SEARCH_API;
@@ -34,65 +35,105 @@ const RecipeSearch = () => {
     );
   };
 
-  const fetchRecipes = useCallback(
-    async (ingredients, cuisine, difficulty, time, anything) => {
-      const genAI = new GoogleGenerativeAI(API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const prompt = `
-                
-        Please provide a list of recipes in a formatted list that includes a picture, title, cusine,key ingredients, cooking time, and difficulty level for each dish. Each recipe should be presented as follows:
-        
-        Recipe Title: [Name of the Dish]
-       Ingredients: [List the main key ingredients used]
-        Cooking Time: [Specify the total time required to prepare and cook the dish]
-        Difficulty Level: [Indicate whether the dish is easy, medium, or hard to prepare]
-        cuisine: [cusine type]
-        result example:
+  //   const fetchRecipes = useCallback(
+  //     async (ingredients, cuisine, difficulty, time, anything) => {
+  //       const genAI = new GoogleGenerativeAI(API_KEY);
+  //       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  //       const prompt = `Please provide a list of recipes that meet the following criteria:
+  // - Key ingredients: ${ingredients}
+  // - Cuisine type: ${cuisine}
+  // - Difficulty level: ${difficulty}
+  // - Cooking time: ${time}
+  // - Special requirements or notes: ${anything}
 
-        [
-        {
-            "id": "recipe-1",
-            "title": "Kimchi Fried Rice",
-            "image": "link to image",
-            "ingredients": ["Kimchi", "onion", "tuna", "rice"],
-            "cookingTime": "15 min",
-            "difficulty": "Easy",
-            "cuisine": "Korean",
-            "comment": "A quick and easy weeknight meal that uses up leftover kimchi."
-          },
-          {
-            "id": "recipe-2",
-    "title": "Kimchi Fried Rice",
-    "image": "link to image",
-    "ingredients": ["Kimchi", "onion", "tuna", "rice"],
-    "cookingTime": "15 minutes",
-    "difficulty": "Easy",
-    "cuisine": "Korean",
-    "comment": "A quick and easy weeknight meal that uses up leftover kimchi."
-          }]
+  // Each recipe should include:
+  //         Recipe Title: [Name of the Dish]
+  //        Ingredients: [List the main key ingredients used]
+  //         Cooking Time: [Specify the total time required to prepare and cook the dish]
+  //         Difficulty Level: [Indicate whether the dish is easy, medium, or hard to prepare]
+  //         cuisine: [cusine type]
+  //         Comment: [Any additional notes or tips about the recipe]
+  //         result example:
 
-        
-        
-        you must find and get result recipe menu including key ingredients: ${ingredients} and  ${cuisine} cuisions,  and difficulty: ${difficulty} and time: ${time}.
-        You must search recipe if there is comments ' ${anything} ' and find proper results in the recipe.
-        Think step by step and for webpage display, make sure it shuold be in a array object strict JSON format and must do not include any text or symbol  such as 'js' or comma or  outside of array object .
-        you must not contain any backticks or period, as these can cause parsing errors.
-        Ensure that the image URLs provided are valid and accesible search using google image or recipe.com.
-        do not use wp-content in the URL.
-        `;
-      console.log(prompt);
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text(); // 이 부분에서 반환되는 데이터의 형태를 확인
+  //         [
+  //         {
+  //             "id": "recipe-1",
+  //             "title": "Kimchi Fried Rice",
+  //             "image": "link to image",
+  //             "ingredients": ["Kimchi", "onion", "tuna", "rice"],
+  //             "cookingTime": "15 min",
+  //             "difficulty": "Easy",
+  //             "cuisine": "Korean",
+  //             "comment": "A quick and easy weeknight meal that uses up leftover kimchi."
+  //           },
+  //           {
+  //             "id": "recipe-2",
+  //     "title": "Kimchi Fried Rice",
+  //     "image": "link to image",
+  //     "ingredients": ["Kimchi", "onion", "tuna", "rice"],
+  //     "cookingTime": "15 minutes",
+  //     "difficulty": "Easy",
+  //     "cuisine": "Korean",
+  //     "comment": "A quick and easy weeknight meal that uses up leftover kimchi."
+  //           }]
 
-      const removeText = text.replace("`", "");
+  //         You must find and get results of recipe menus including key ingredients: ${ingredients} and  ${cuisine} cuisions,  and difficulty: ${difficulty} and time: ${time}.
+  //         Your job is find which include recipes that specifically mention or are related to '${anything}'. This could be a specific cooking style, ingredient, dietary restriction, or any particular theme or preference mentioned in the recipe details.
+  //         Think step by step and for webpage display, make sure it shuold be in a array object strict JSON format and must do not include any text or symbol  such as 'js' or comma or  outside of array object .
+  //         You must not contain any backticks or period, as these can cause parsing errors.
 
-      const parsedRecipes = JSON.parse(removeText);
+  //         `;
 
-      return parsedRecipes;
-    },
-    [API_KEY, ingredients, cuisine, difficulty, time, anything]
-  );
+  //       const result = await model.generateContent(prompt);
+  //       const response = await result.response;
+  //       const text = response.text(); // 이 부분에서 반환되는 데이터의 형태를 확인
+
+  //       const removeText = text.replace("`", "");
+
+  //       const parsedRecipes = JSON.parse(removeText);
+
+  //       return parsedRecipes;
+  //     },
+  //     [API_KEY, ingredients, cuisine, difficulty, time, anything]
+  //   );
+  const openai = new OpenAI({
+    apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+    dangerouslyAllowBrowser: true,
+  });
+
+  const fetchRecipes = useCallback(async () => {
+    const messages = [
+      {
+        role: "system",
+        content: `You are a chef designed to output JSON format without whitespace between keys and values your role is find recipes with the following specifics:-Ingredients:${ingredients}-Cuisine:${cuisine}-Difficulty:${difficulty}- Cooking time: ${time}- Additional notes: ${anything}- image: [search menu real image link] Please return fields for title, ingredients[arraytype], cooking time, difficulty, cuisine, image and feature(maxlength:20).you must search 2 to 4 recipes," `,
+      },
+    ];
+    console.log(messages);
+    try {
+      const completion = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo-0125",
+        response_format: { type: "json_object" },
+        messages,
+        temperature: 0.5,
+        max_tokens: 512,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      });
+
+      console.log(completion);
+      const recipesJson = JSON.parse(completion.choices[0].message.content);
+      const recipesArray = recipesJson.recipes;
+
+      console.log(recipesArray);
+
+      return recipesArray;
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+      return null;
+    }
+  }, [ingredients, cuisine, difficulty, time, anything]);
+
   const queryKeys = useMemo(
     () => [
       "recipes",
@@ -108,19 +149,21 @@ const RecipeSearch = () => {
   const fetchImagesForRecipes = async (recipes) => {
     const imagePromises = recipes.map(async (recipe) => {
       const address = `https://www.googleapis.com/customsearch/v1?key=${API_KEY_IMG}&cx=05d57925008784ee9&q=${recipe.title}&num=1`;
+      console.log("recipe title", recipe.title);
       try {
         const response = await axios.get(address);
         return {
-          [recipe.id]: response.data.items[0]?.pagemap?.cse_image[0]?.src,
+          [recipe.title]: response.data.items[0]?.pagemap?.cse_image[0]?.src,
         };
       } catch (error) {
         console.error("Failed to fetch image for", recipe.title, error);
-        return { [recipe.id]: null };
+        return { [recipe.id]: "../assets/default.jpg" }; // Set a default image path
       }
     });
 
     Promise.all(imagePromises).then((results) => {
-      setImageData(Object.assign({}, ...results));
+      setImageData((prev) => ({ ...prev, ...Object.assign({}, ...results) }));
+      console.log(imageData);
     });
   };
   const {
@@ -132,7 +175,13 @@ const RecipeSearch = () => {
     () => fetchRecipes(ingredients, cuisine, difficulty, time, anything),
     {
       enabled: fetchTrigger,
-      onSuccess: fetchImagesForRecipes,
+      onSuccess: (data) => {
+        fetchImagesForRecipes(data);
+        setFetchTrigger(false);
+      },
+      onError: () => {
+        setFetchTrigger(false);
+      },
       staleTime: 1000 * 60 * 10,
       cacheTime: 1000 * 60 * 60,
     }
@@ -140,19 +189,16 @@ const RecipeSearch = () => {
   const handleRecipe = (e) => {
     e.preventDefault();
     console.log("Ingredients at submit:", ingredients);
-    if (!ingredients) {
-      toast.error("Please enter ingredients");
-      ref.current?.focus();
-      return;
-    }
+
     setFetchTrigger(true);
   };
+  console.log(recipes);
 
   return (
     <div
       className={`${
         recipes?.length > 0 ? " md:justify-start" : " justify-center"
-      } w-full items-center flex `}
+      } w-full items-center flex md:-mt-44 bg-slate-50`}
     >
       <div
         className={`  lg:pt-10 flex-col md:flex-row md:space-x-4 items-start   ${
@@ -163,13 +209,13 @@ const RecipeSearch = () => {
       >
         <ToastContainer />
         <div
-          className={`flex flex-col transition-all md:p-8 p-4 rounded-lg my-4 shrink-0 ${
+          className={`flex flex-col transition-all md:p-8 p-4 rounded-lg my-4  ${
             recipes?.length > 0
               ? "md:flex-start md:justify-start md:border-r-2 md:border-zinc-200 md:h-screen mx-auto  "
-              : "bg-white shadow-lg justify-center md:w-[40%] mt-24 w-[80%]  "
+              : "bg-white shadow-lg justify-center md:w-[40%] mt-24 sm:mt-48 lg:mt-10 w-[80%]  "
           }`}
         >
-          <h1 className="sm:text-3xl font-bold text-center">
+          <h1 className="text-lg font-bold text-center">
             Ingredients based Recipe
           </h1>
           <form
@@ -192,21 +238,20 @@ const RecipeSearch = () => {
                 onChange={(e) => setIngredients(e.target.value)}
               />
             </div>
-
-            <div className=" flex items-center ">
-              <label className="mr-4 sm:text-2xl text-md sm:w-32 w-20 ">
+            <div className="flex items-center">
+              <label className="mr-4 sm:text-2xl text-md md:w-32 w-20">
                 Cuisine
               </label>
-              <div className="flex  flex-wrap lg:flex-row sm:space-x-4 justify-end  sm:items-center  sm:space-y-0 space-y-2 flex-col w-30 ">
-                <div className="flex items-start space-x-2 ">
+              <div className="flex   justify-end sm:items-center sm:space-y-0 space-y-2 flex-col w-30 pl-4">
+                <div className="flex items-start space-x-2 md:items-center">
                   <input
                     type="checkbox"
                     name="korean"
                     value="korean"
                     onChange={handleCuisineChange}
-                    className="  appearance-none bg-white bg-check h-6 w-6 border border-gray-300 rounded-md checked:bg-pink checked:border-transparent focus:outline-none"
+                    className="appearance-none bg-white bg-check h-6 w-6 border border-gray-300 rounded-md checked:bg-pink checked:border-transparent focus:outline-none"
                   />
-                  <span className="w-24 font-normal pl-2  md:text-xl text-md sm:pl-0 text-gray-700 md:text-left text-right md:items-center ">
+                  <span className="w-24 text-right font-normal pl-2 md:text-xl text-md text-gray-700 md:text-left">
                     Korean
                   </span>
                 </div>
@@ -217,9 +262,9 @@ const RecipeSearch = () => {
                     name="Japanese"
                     value="Japanese"
                     onChange={handleCuisineChange}
-                    className=" appearance-none bg-white bg-check h-6 w-6 border border-gray-300 rounded-md checked:bg-pink checked:border-transparent focus:outline-none"
+                    className="appearance-none bg-white bg-check h-6 w-6 border border-gray-300 rounded-md checked:bg-pink checked:border-transparent focus:outline-none"
                   />
-                  <span className="w-24 text-right font-normal  pl-2  md:text-xl text-md  text-gray-700  md:text-left dark:text-white">
+                  <span className="w-24 text-right font-normal pl-2 md:text-xl text-md text-gray-700 md:text-left">
                     Japanese
                   </span>
                 </div>
@@ -229,9 +274,9 @@ const RecipeSearch = () => {
                     name="chinese"
                     value="chinese"
                     onChange={handleCuisineChange}
-                    className=" appearance-none bg-white bg-check h-6 w-6 border border-gray-300 rounded-md checked:bg-pink checked:border-transparent focus:outline-none"
+                    className="appearance-none bg-white bg-check h-6 w-6 border border-gray-300 rounded-md checked:bg-pink checked:border-transparent focus:outline-none"
                   />
-                  <span className="w-24 text-right font-normal  pl-2  md:text-xl text-md  text-gray-700 dark:text-white  md:text-left">
+                  <span className="w-24 text-right font-normal pl-2 md:text-xl text-md text-gray-700 md:text-left">
                     Chinese
                   </span>
                 </div>
@@ -241,14 +286,15 @@ const RecipeSearch = () => {
                     name="western"
                     value="western"
                     onChange={handleCuisineChange}
-                    className=" appearance-none bg-white bg-check h-6 w-6 border border-gray-300 rounded-md checked:bg-pink checked:border-transparent focus:outline-none"
+                    className="appearance-none bg-white bg-check h-6 w-6 border border-gray-300 rounded-md checked:bg-pink checked:border-transparent focus:outline-none"
                   />
-                  <span className="w-24 text-right font-normal  pl-2  md:text-xl text-md  text-gray-700 dark:text-white  md:text-left">
+                  <span className="w-24 text-right font-normal pl-2 md:text-xl text-md text-gray-700 md:text-left">
                     Western
                   </span>
                 </div>
               </div>
             </div>
+
             <div className="my-4">
               <select
                 value={difficulty}
@@ -272,19 +318,19 @@ const RecipeSearch = () => {
               <option value="Under than 1hr">Under than 1hr</option>
               <option value="More than 1hr">More than 1hr</option>
             </select>
-            <div className="flex  my-8 flex-col gap-4">
-              <label className="mr-4 md:text-2xl">
-                {" "}
-                Anything you want to add in recipe
+            <div className="flex my-8 flex-col gap-4">
+              <label className="mr-4 md:text-xl">
+                Add details or search by menu name:
               </label>
               <input
-                className=" rounded-lg border-dark flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-pink focus:border-transparent"
+                className="rounded-lg border-dark flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-pink focus:border-transparent"
                 type="text"
-                placeholder="Enter anything you want to add in recipe"
+                placeholder="Specify recipe details or menu name"
                 value={anything}
                 onChange={(e) => setAnything(e.target.value)}
               />
             </div>
+
             <div className="mt-8 flex justify-end ">
               <button className="bg-pink lg:w-[100px] w-[60px] p-2 rounded-md text-sm lg:text-xl text-white">
                 Search
@@ -352,11 +398,11 @@ const RecipeSearch = () => {
               </div>
 
               <div className="flex md:flex-row flex-col flex-wrap md:w-[80vw]   items-center">
-                {recipes.map((recipe) => (
+                {recipes?.map((recipe) => (
                   <RecipeCard
                     key={recipe.id}
                     recipe={recipe}
-                    imageSearchList={imageData[recipe.id]}
+                    imageSearchList={imageData[recipe.title]}
                     isMyRecipe={false}
                   />
                 ))}

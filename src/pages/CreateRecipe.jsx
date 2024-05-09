@@ -13,6 +13,7 @@ import {
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
+import { serverTimestamp } from "firebase/firestore";
 
 const CreateRecipe = () => {
   const navigate = useNavigate();
@@ -72,7 +73,7 @@ const CreateRecipe = () => {
         ingredients: formData.ingredients,
         instructions: formData.instructions,
         recipe_tips: formData.recipe_tips,
-        saveTime: new Date().toISOString(),
+        saveTime: serverTimestamp(),
         recipeId: recipeId,
         difficulty: formData.difficulty,
         servings: formData.servings,
